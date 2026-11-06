@@ -3,14 +3,15 @@ import random
 import math
 
 pygame.init()
+pygame.mixer.init()
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 500
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Sprite Collision Game")
 
-# Colors
 WHITE = (255, 255, 255)
+BACKGROUND = f"bg.jpg"
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
@@ -66,11 +67,14 @@ for i in range(7):
     all_sprites.add(enemy)
     enemies.add(enemy)
 
+background = pygame.image.load('bg.jpg')
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 40)
-
+collision_sound = pygame.mixer.Sound('enemy_sound.wav')
 running = True
 while running:
+    screen.fill((0, 0, 0))
+    screen.blit(background, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -79,17 +83,17 @@ while running:
     for enemy in enemies:
         if player.rect.colliderect(enemy.rect):
             score += 1
+            collision_sound.play()
             all_sprites.remove(enemy)
             enemies.remove(enemy) 
 
-    screen.fill(WHITE)
     all_sprites.draw(screen)
 
-    score_text = font.render(f"Score: {score}", True, BLACK)
+    score_text = font.render(f"Score: {score}", True, RED)
     screen.blit(score_text, (10, 10))
 
     if score == 7:
-        victory_message = font.render(f"You have won the game!", True, BLACK)
+        victory_message = font.render(f"You have won the game!", True, RED)
         screen.blit(victory_message, (50, 50))
 
     pygame.display.flip()
